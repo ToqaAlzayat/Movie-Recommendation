@@ -1,0 +1,52 @@
+.horizontal-scroll {
+    display: flex;
+    overflow-x: hidden;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+   
+    padding: 10px; /* Add padding inside the container */
+  }
+  
+  .movie-row {
+    display: flex;
+  }
+  
+
+  
+  .scroll-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .scroll-btn {
+    background-color: #7193D9;
+    border: none;
+    color: white;
+    padding: 6px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    border-radius: 100%;
+  }
+  
+  
+  .head {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)), url(../../Images/background.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    height: 100vh;
+    width: 100%;
+}
+.back {
+    display: flex;                
+    flex-direction: column;      
+    justify-content: center;      
+    align-items: center;          
+    height: 100vh;               
+    color: white;   
+}
+
+
+

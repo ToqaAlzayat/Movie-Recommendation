@@ -1,0 +1,12 @@
+.page-btn{
+    border-color: #7193D9 !important;
+    color: #1D2659 !important;
+    margin: 10px;
+  }
+.page-btn:hover{
+    background-color: #7193D9 !important;
+    color: #1D2659 !important;
+  }
+  .page-num{
+    margin-top: 15px;
+  }
