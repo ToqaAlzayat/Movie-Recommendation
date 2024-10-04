@@ -70,8 +70,8 @@ const MoviesByGenre = () => {
       <h2>{genre} Movies</h2>
       <div className="row">
         {movies.map((movie) => (
-          <div className="col-md-6" key={movie.imdbID}>
-            {MovieCard(movie)}
+          <div className="col-md-6">
+            {<MovieCard key={movie.imdbID} movie={movie} /> }
           </div>
         ))}
       </div>

@@ -84,7 +84,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', actionScrollRef)}> &lt;</button>
         <div className="horizontal-scroll" ref={actionScrollRef}>
           <div className="movie-row">
-            {actionMovies.map((movie) => MovieCard(movie))}
+            {actionMovies.map((movie) => <MovieCard key={movie.imdbID} movie={movie} /> )}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', actionScrollRef)}>&gt;</button>
@@ -96,7 +96,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', adventureScrollRef)}>&lt;</button>
         <div className="horizontal-scroll" ref={adventureScrollRef}>
           <div className="movie-row">
-            {adventureMovies.map((movie) => MovieCard(movie))}
+            {adventureMovies.map((movie) => <MovieCard key={movie.imdbID} movie={movie} /> )}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', adventureScrollRef)}>&gt;</button>
@@ -108,7 +108,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', dramaScrollRef)}>&lt;</button>
         <div className="horizontal-scroll" ref={dramaScrollRef}>
           <div className="movie-row">
-            {dramaMovies.map((movie) => MovieCard(movie))}
+            {dramaMovies.map((movie) => <MovieCard key={movie.imdbID} movie={movie} /> )}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', dramaScrollRef)}>&gt;</button>
@@ -120,7 +120,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', comedyScrollRef)}>&lt;</button>
         <div className="horizontal-scroll" ref={comedyScrollRef}>
           <div className="movie-row">
-            {comedyMovies.map((movie) => MovieCard(movie))}
+            {comedyMovies.map((movie) => <MovieCard key={movie.imdbID} movie={movie} /> )}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', comedyScrollRef)}>&gt;</button>

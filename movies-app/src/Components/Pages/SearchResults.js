@@ -49,8 +49,8 @@ const SearchResults=()=>{
           {searchResults.length > 0 ? (
             <div className="row">
               {searchResults.map((movie) => (
-                <div key={movie.imdbID} className="col-md-6 mb-4">
-                  {MovieCard(movie)} 
+                <div  className="col-md-6 mb-4">
+                  {<MovieCard key={movie.imdbID} movie={movie} /> } 
                 </div>
               ))}
             </div>
