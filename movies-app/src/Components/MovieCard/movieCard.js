@@ -1,4 +1,4 @@
- import './movieCard.css'
+ import './MovieCard.css'
  function movieCard(movie) {
   return (
     <>

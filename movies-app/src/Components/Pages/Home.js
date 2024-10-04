@@ -1,7 +1,7 @@
 import "./Home.css";
 import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../axiosIn'; 
-import movieCard from "../MovieCard/movieCard";
+import MovieCard from "../MovieCard/MovieCard";
 
 const Home = () => {
   const [actionMovies, setActionMovies] = useState([]);
@@ -84,7 +84,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', actionScrollRef)}> &lt;</button>
         <div className="horizontal-scroll" ref={actionScrollRef}>
           <div className="movie-row">
-            {actionMovies.map((movie) => movieCard(movie))}
+            {actionMovies.map((movie) => MovieCard(movie))}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', actionScrollRef)}>&gt;</button>
@@ -96,7 +96,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', adventureScrollRef)}>&lt;</button>
         <div className="horizontal-scroll" ref={adventureScrollRef}>
           <div className="movie-row">
-            {adventureMovies.map((movie) => movieCard(movie))}
+            {adventureMovies.map((movie) => MovieCard(movie))}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', adventureScrollRef)}>&gt;</button>
@@ -108,7 +108,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', dramaScrollRef)}>&lt;</button>
         <div className="horizontal-scroll" ref={dramaScrollRef}>
           <div className="movie-row">
-            {dramaMovies.map((movie) => movieCard(movie))}
+            {dramaMovies.map((movie) => MovieCard(movie))}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', dramaScrollRef)}>&gt;</button>
@@ -120,7 +120,7 @@ const Home = () => {
         <button className="scroll-btn" onClick={() => handleScroll('prev', comedyScrollRef)}>&lt;</button>
         <div className="horizontal-scroll" ref={comedyScrollRef}>
           <div className="movie-row">
-            {comedyMovies.map((movie) => movieCard(movie))}
+            {comedyMovies.map((movie) => MovieCard(movie))}
           </div>
         </div>
         <button className="scroll-btn" onClick={() => handleScroll('next', comedyScrollRef)}>&gt;</button>

@@ -1,26 +1,30 @@
-import "./MovieList.css"
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axiosInstance from "../axiosIn";
 import MovieCard from "../MovieCard/MovieCard";
 
-const MoviesList = () => {
+const MoviesByGenre = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   
-  
+  const location = useLocation();
+  const genre = location.state?.query; // Access the genre from state passed through navigate
+
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
-    fetchMovies(currentPage);
-  }, [currentPage]);
+    if (genre) {
+      fetchMoviesByGenre(genre, currentPage);
+    }
+  }, [genre, currentPage]);
 
-  const fetchMovies = async (page) => {
+  const fetchMoviesByGenre = async (genre, page) => {
     try {
-      // Use axiosInstance to fetch the list of movies
+      // Use axiosInstance to fetch the list of movies by genre
       const response = await axiosInstance.get('', {
         params: {
-          s: 'movie',
+          s: genre,
           type: 'movie',
           page: page,
         }
@@ -63,7 +67,7 @@ const MoviesList = () => {
 
   return (
     <div className="container mt-2">
-      <h2>Movies List</h2>
+      <h2>{genre} Movies</h2>
       <div className="row">
         {movies.map((movie) => (
           <div className="col-md-6" key={movie.imdbID}>
@@ -80,4 +84,4 @@ const MoviesList = () => {
   );
 };
 
-export default MoviesList;
+export default MoviesByGenre;
