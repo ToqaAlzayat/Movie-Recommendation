@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axiosInstance from "../axiosIn";
-import MovieCard from "../MovieCard/MovieCard";
+import MovieCard from "../MovieCard/movieCard";
 
 const MoviesByGenre = () => {
   const [movies, setMovies] = useState([]);
