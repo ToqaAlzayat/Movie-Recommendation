@@ -1,7 +1,7 @@
 import "./Home.css";
 import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../axiosIn'; 
-import MovieCard from "../MovieCard/movieCard";
+import MovieCard from "../MovieCard/MovieCard";
 
 const Home = () => {
   const [actionMovies, setActionMovies] = useState([]);

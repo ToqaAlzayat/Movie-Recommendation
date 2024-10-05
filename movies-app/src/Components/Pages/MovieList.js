@@ -1,7 +1,7 @@
 import "./MovieList.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosIn";
-import MovieCard from "../MovieCard/movieCard";
+import MovieCard from "../MovieCard/MovieCard";
 
 const MoviesList = () => {
   const [movies, setMovies] = useState([]);
@@ -139,7 +139,7 @@ const MoviesList = () => {
         
         {/* Release Date Filter */}
         <div className="btn-group">
-          <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+          <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
             Release Date
           </button>
           <ul className="dropdown-menu">
@@ -153,7 +153,7 @@ const MoviesList = () => {
         
         {/* Genres Filter */}
         <div className="btn-group">
-          <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+          <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
             Genres
           </button>
           <ul className="dropdown-menu">
@@ -167,7 +167,7 @@ const MoviesList = () => {
 
         {/* Rating Filter */}
         <div className="btn-group">
-          <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+          <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
             Rating
           </button>
           <ul className="dropdown-menu">

@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 import axiosInstance from "../axiosIn";
-import MovieCard from "../MovieCard/movieCard";
+import MovieCard from "../MovieCard/MovieCard";
 
 const SearchResults=()=>{
     const location = useLocation();
