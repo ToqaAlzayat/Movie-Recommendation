@@ -1,11 +1,11 @@
 import "./MovieList.css";
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../axiosIn";
+import axiosInstance from "../axiosIn"; // Make sure this is pointing to your server's base URL
 import MovieCard from "../MovieCard/MovieCard";
 
 const MoviesList = () => {
-  const [movies, setMovies] = useState([]);
-  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [allMovies, setAllMovies] = useState([]); // Store all movies
+  const [filteredMovies, setFilteredMovies] = useState([]); // Store filtered movies for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [releaseDate, setReleaseDate] = useState('');
@@ -16,51 +16,62 @@ const MoviesList = () => {
   const [availableRatings, setAvailableRatings] = useState([]);
 
   const ITEMS_PER_PAGE = 10;
+  const MAX_MOVIES = 100; // Max number of movies to fetch for filtering
 
   useEffect(() => {
-    fetchMovies(currentPage);
-  }, [currentPage]);
+    fetchMovies();
+  }, []);
 
   useEffect(() => {
-    applyFilters();
-  }, [releaseDate, genres, rating]);
+    applyFiltersAndSort(); // Apply filters and sorting whenever filters change
+  }, [releaseDate, genres, rating, allMovies]);
 
-  // Fetch movies and extract dynamic filters
-  const fetchMovies = async (page) => {
+  // Fetch all movies (up to a reasonable limit like 100)
+  const fetchMovies = async () => {
+    let moviesData = [];
+    let page = 1;
+    let totalFetched = 0;
+
     try {
-      const response = await axiosInstance.get('', {
-        params: {
-          s: 'movie',
-          type: 'movie',
-          page: page,
+      while (totalFetched < MAX_MOVIES) {
+        const response = await axiosInstance.get('/search', {
+          params: {
+            s: 'movie',
+            type: 'movie',
+            page: page,
+          }
+        });
+
+        if (response.data.Response === 'True') {
+          const moviesList = response.data.Search;
+
+          // Fetch detailed data for each movie
+          const detailedMoviesPromises = moviesList.map(movie =>
+            axiosInstance.get(`/movie/${movie.imdbID}`)
+          );
+
+          const detailedMovies = await Promise.all(detailedMoviesPromises);
+          const detailedMoviesData = detailedMovies.map(res => res.data);
+
+          moviesData = [...moviesData, ...detailedMoviesData];
+          totalFetched += detailedMoviesData.length;
+
+          if (moviesData.length >= MAX_MOVIES || !response.data.totalResults) {
+            break;
+          }
+
+          page++; // Move to the next page
+        } else {
+          console.error(response.data.Error);
+          break;
         }
-      });
-
-      if (response.data.Response === 'True') {
-        const moviesList = response.data.Search;
-
-        // Fetch detailed data for each movie
-        const detailedMoviesPromises = moviesList.map(movie =>
-          axiosInstance.get('', {
-            params: {
-              i: movie.imdbID
-            }
-          })
-        );
-        
-        const detailedMovies = await Promise.all(detailedMoviesPromises);
-        const detailedMoviesData = detailedMovies.map(res => res.data);
-
-        setMovies(detailedMoviesData);
-        setFilteredMovies(detailedMoviesData); // Initial filtering data
-
-        const totalResults = response.data.totalResults;
-        setTotalPages(Math.ceil(totalResults / ITEMS_PER_PAGE));
-
-        extractDynamicFilters(detailedMoviesData);
-      } else {
-        console.error(response.data.Error);
       }
+
+      setAllMovies(moviesData);
+      setFilteredMovies(moviesData.slice(0, ITEMS_PER_PAGE)); // Initialize with the first page of filtered results
+      setTotalPages(Math.ceil(moviesData.length / ITEMS_PER_PAGE));
+
+      extractDynamicFilters(moviesData);
     } catch (error) {
       console.error('Error fetching movies:', error);
     }
@@ -89,9 +100,9 @@ const MoviesList = () => {
     setAvailableRatings(Array.from(ratingsSet));
   };
 
-  // Apply filters client-side
-  const applyFilters = () => {
-    let filtered = [...movies];
+  // Apply filters and sort movies by rating
+  const applyFiltersAndSort = () => {
+    let filtered = [...allMovies];
 
     if (releaseDate) {
       filtered = filtered.filter(movie => movie.Year === releaseDate);
@@ -105,21 +116,19 @@ const MoviesList = () => {
       filtered = filtered.filter(movie => movie.imdbRating && movie.imdbRating === rating);
     }
 
-    setFilteredMovies(filtered);
+    // Sort filtered movies by rating (from highest to lowest)
+    filtered.sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating));
+
+    // Set filtered movies and reset to page 1
+    setFilteredMovies(filtered.slice(0, ITEMS_PER_PAGE)); // Show first page of results
+    setCurrentPage(1);
+    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
   };
 
   // Reset filters
-  const resetReleaseDate = () => {
-    setReleaseDate('');
-  };
-
-  const resetGenres = () => {
-    setGenres('');
-  };
-
-  const resetRating = () => {
-    setRating('');
-  };
+  const resetReleaseDate = () => setReleaseDate('');
+  const resetGenres = () => setGenres('');
+  const resetRating = () => setRating('');
 
   const handlePageChange = (direction) => {
     if (direction === 'next' && currentPage < totalPages) {
@@ -127,6 +136,12 @@ const MoviesList = () => {
     } else if (direction === 'prev' && currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
+
+    // Display movies for the current page
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setFilteredMovies(allMovies.slice(startIndex, endIndex));
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -136,7 +151,6 @@ const MoviesList = () => {
 
       {/* Filter buttons */}
       <div className="btn-group">
-        
         {/* Release Date Filter */}
         <div className="btn-group">
           <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
@@ -178,7 +192,6 @@ const MoviesList = () => {
             <li><a className="dropdown-item" href="#" onClick={resetRating}>Reset</a></li>
           </ul>
         </div>
-        
       </div>
 
       {/* Movies List */}
@@ -199,7 +212,7 @@ const MoviesList = () => {
         <button className='btn page-btn' onClick={() => handlePageChange('prev')} disabled={currentPage === 1}>
           Previous
         </button>
-        <span className="page-num">Page {currentPage} of {totalPages}</span>
+        <span className="mx-3">Page {currentPage} of {totalPages}</span>
         <button className='btn page-btn' onClick={() => handlePageChange('next')} disabled={currentPage === totalPages}>
           Next
         </button>

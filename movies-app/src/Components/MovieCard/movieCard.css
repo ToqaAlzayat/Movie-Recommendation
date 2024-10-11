@@ -15,4 +15,19 @@
  .card:hover {
    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.20);
  }
- 
+ .add-btn{
+  border-color: #7193D9 !important;
+  color: #1D2659 !important;
+}
+.add-btn:hover{
+  background-color: #7193D9 !important;
+  color: #1D2659 !important;
+}
+
+.heart{
+  color:rgb(183, 183, 183);
+  font-size: 30px !important;
+}
+.heart:hover {
+  color: #BF2A37;
+}

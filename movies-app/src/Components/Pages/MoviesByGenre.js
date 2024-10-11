@@ -22,7 +22,7 @@ const MoviesByGenre = () => {
   const fetchMoviesByGenre = async (genre, page) => {
     try {
       // Use axiosInstance to fetch the list of movies by genre
-      const response = await axiosInstance.get('', {
+      const response = await axiosInstance.get('/search', {
         params: {
           s: genre,
           type: 'movie',
@@ -35,11 +35,8 @@ const MoviesByGenre = () => {
 
         // Fetch detailed data for each movie in parallel
         const detailedMoviesPromises = moviesList.map(movie =>
-          axiosInstance.get('', {
-            params: {
-              i: movie.imdbID
-            }
-          })
+          axiosInstance.get(`/movie/${movie.imdbID}`)
+
         );
         
         const detailedMovies = await Promise.all(detailedMoviesPromises);

@@ -11,11 +11,7 @@ const MovieDetails = ()=>{
 
     const fetchMovieDetails = async()=>{
         try{
-            const response = await axiosInstance.get('',{
-                params:{
-                    i:imdbID
-                }
-            });
+          const response = await axiosInstance.get(`/movie/${imdbID}`);
             setMovie(response.data);
         } catch(error){
             console.error('Error fetching movie details:', error);

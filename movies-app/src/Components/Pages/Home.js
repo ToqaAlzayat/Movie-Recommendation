@@ -24,21 +24,17 @@ const Home = () => {
   // Generalized function to fetch and sort movies by genre
   const fetchTopRatedMovies = async (genre, setMovies) => {
     try {
-      const response = await axiosInstance.get('', {
+      const response = await axiosInstance.get('/movies', {
         params: {
-          s: genre,
-          type: 'movie',
-          page: 1
-        }
+          genre: genre        }
       });
 
-      if (response.data.Response === 'True') {
-        const moviesList = response.data.Search.slice(0, 10); // Get top 10 movies
+      if (response.status ===200) {
+        const moviesList = response.data.slice(0, 10); // Get top 10 movies
 
         const detailedMoviesPromises = moviesList.map(movie =>
-          axiosInstance.get('', {
-            params: { i: movie.imdbID }
-          })
+          axiosInstance.get(`/movie/${movie.imdbID}`)
+
         );
 
         const detailedMovies = await Promise.all(detailedMoviesPromises);

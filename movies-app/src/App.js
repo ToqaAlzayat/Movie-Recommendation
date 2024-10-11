@@ -20,7 +20,7 @@ function App() {
      <Navbar />
 
       <Routes>
-      <Route path='' element={<Home/>}></Route>
+      <Route path='/' element={<Home/>}></Route>
       <Route path='/movies' element={<MoviesList/>}></Route>
       <Route path='/search-results' element={<SearchResults/>}></Route>
       <Route path="/genre/:genre" element={<MoviesByGenre />} />    

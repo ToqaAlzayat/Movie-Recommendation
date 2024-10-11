@@ -16,19 +16,17 @@ const SearchResults=()=>{
 
     const performSearch = async (searchQuery) => {
         try {
-          const response = await axiosInstance.get('', {
+          const response = await axiosInstance.get('/search', {
             params: {
               s: searchQuery,
-              type: 'movie',
             },
           });
-    
+          
+         
           if (response.data.Response === 'True') {
             const moviesList = response.data.Search;
             const detailedMoviesPromises = moviesList.map((movie) =>
-              axiosInstance.get('', {
-                params: { i: movie.imdbID },
-              })
+              axiosInstance.get(`/movie/${movie.imdbID}`)
             );
     
             const detailedMovies = await Promise.all(detailedMoviesPromises);

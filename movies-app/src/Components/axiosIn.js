@@ -1,13 +1,8 @@
-import axios from "axios";
+
+import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://www.omdbapi.com/',
-    params:{
-      apikey:'89bdb7e7'
-    }
-  });
-  export default axiosInstance;
+    baseURL: 'http://localhost:5000/api', // Point to your backend server
+});
 
-
-  //81d57a50 new
-  //89bdb7e7 old
+export default axiosInstance;
