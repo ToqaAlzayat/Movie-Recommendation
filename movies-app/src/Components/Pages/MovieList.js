@@ -1,7 +1,7 @@
 import "./MovieList.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosIn"; // Make sure this is pointing to your server's base URL
-import MovieCard from "../MovieCard/MovieCard";
+import MovieCard from "../MovieCard/movieCard";
 
 const MoviesList = () => {
   const [allMovies, setAllMovies] = useState([]); // Store all movies

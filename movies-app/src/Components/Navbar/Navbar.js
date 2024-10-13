@@ -76,7 +76,7 @@ export default function Navbar() {
               </ul>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/favourites">
+                <Link className="nav-link" to="/favorites">
                   Favourites
                 </Link>
               </li>
