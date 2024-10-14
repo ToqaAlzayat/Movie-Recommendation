@@ -11,7 +11,8 @@ const Favorites = () => {
   {favorites.length > 0 ? (
     <div className="row"> {/* Use row to structure the cards */}
       {favorites.map((movie) => (
-         <div className="card mb-3 m-3" style={{ maxWidth: "540px" }}>
+        <div className="col-md-6">
+           <div className="card mb-3 m-3" style={{ maxWidth: "540px" }}>
          <div className="row g-0">
            <div className="col-12 col-md-4">
              <Link to={`/movie/${movie.imdbID}`} style={{ textDecoration: "none", color: "inherit" }}>
@@ -40,6 +41,7 @@ const Favorites = () => {
                 </div>
               </div>
             </div>
+          </div>
           </div>
       ))}
     </div>

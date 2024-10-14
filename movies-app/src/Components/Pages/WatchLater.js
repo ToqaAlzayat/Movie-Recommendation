@@ -14,6 +14,7 @@ const WatchLater = () => {
       {watchLater.length > 0 ? (
         <div className="row">
           {watchLater.map((movie) => (
+           <div className="col-md-6">
             <div className="card mb-3 m-3" style={{ maxWidth: "540px" }}>
             <div className="row g-0">
               <div className="col-12 col-md-4">
@@ -44,6 +45,8 @@ const WatchLater = () => {
                  </div>
                </div>
              </div>
+             </div>
+
           ))}
         </div>
       ) : (
