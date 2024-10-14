@@ -1,17 +1,27 @@
 .card-img {
   height: 300px !important;
    width: 100% !important;
-   object-fit: cover; 
+   object-fit: cover !important; 
  }
  
  .card {
-   height: 300px !important;
+   height: auto !important;
    width: 550px;
    border: 1px solid #ddd;
    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
    transition: all 0.3s ease;
  }
- 
+ .card-title {
+  word-wrap: break-word; 
+  white-space: normal;
+  color: #20448C!important;
+}
+.card-text{
+  color: #295F98 !important;
+}
+.rate{
+  color: #730A26 !important;
+}
  .card:hover {
    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.20);
  }
@@ -24,10 +34,55 @@
   color: #1D2659 !important;
 }
 
-.heart{
-  color:rgb(183, 183, 183);
-  font-size: 30px !important;
+.heart {
+  color: rgb(183, 183, 183); /* Default heart color */
+  font-size: 30px;
+  transition: color 0.3s ease;
 }
+
 .heart:hover {
-  color: #BF2A37;
+  color: #BF2A37; /* Color on hover */
+}
+
+/* Active state styling */
+.heart.active {
+  color: #BF2A37 !important; /* Color when the button is clicked */
+}
+@media (max-width: 768px) {
+  .card {
+    height: auto !important;
+    width: 100%; /* Full width for mobile */
+  }
+  
+  .card-img {
+    height: 500px !important;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+
+  .heart {
+    font-size: 24px !important; /* Reduce icon size for small screens */
+  }
+
+  .add-btn {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-img {
+    height: 500px !important;
+  }
+
+  .heart {
+    font-size: 20px !important;
+  }
+
+  .add-btn {
+    font-size: 12px;
+    padding: 3px 7px;
+  }
 }

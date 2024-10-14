@@ -1,7 +1,7 @@
 import "./MovieList.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosIn"; // Make sure this is pointing to your server's base URL
-import MovieCard from "../MovieCard/movieCard";
+import MovieCard from "../MovieCard/MovieCard";
 
 const MoviesList = () => {
   const [allMovies, setAllMovies] = useState([]); // Store all movies
@@ -198,7 +198,7 @@ const MoviesList = () => {
       <div className="row mt-3">
         {filteredMovies.length > 0 ? (
           filteredMovies.map((movie) => (
-            <div key={movie.imdbID} className="col-md-6">
+            <div key={movie.imdbID} className="col-12 col-md-6">
               <MovieCard movie={movie} />
             </div>
           ))
@@ -212,7 +212,7 @@ const MoviesList = () => {
         <button className='btn page-btn' onClick={() => handlePageChange('prev')} disabled={currentPage === 1}>
           Previous
         </button>
-        <span className="mx-3">Page {currentPage} of {totalPages}</span>
+        <span className="mx-3 page-num">Page {currentPage} of {totalPages}</span>
         <button className='btn page-btn' onClick={() => handlePageChange('next')} disabled={currentPage === totalPages}>
           Next
         </button>

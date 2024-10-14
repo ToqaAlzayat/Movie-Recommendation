@@ -45,8 +45,35 @@
     justify-content: center;      
     align-items: center;          
     height: 100vh;               
-    color: white;   
+    color: white;  
+    animation: fadeIn 2s ease-in-out;
+ 
 }
 
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+h1, p, h3  {
+  animation: slideUp 1s ease-out forwards;
+}
+
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
