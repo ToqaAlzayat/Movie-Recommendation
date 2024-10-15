@@ -1,6 +1,6 @@
 import "./MovieList.css";
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../axiosIn"; // Make sure this is pointing to your server's base URL
+import axiosInstance from "../axiosIn"; 
 import MovieCard from "../MovieCard/MovieCard";
 
 const MoviesList = () => {
@@ -11,12 +11,19 @@ const MoviesList = () => {
   const [releaseDate, setReleaseDate] = useState('');
   const [genres, setGenres] = useState('');
   const [rating, setRating] = useState('');
-  const [availableGenres, setAvailableGenres] = useState([]);
-  const [availableReleaseDates, setAvailableReleaseDates] = useState([]);
-  const [availableRatings, setAvailableRatings] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
 
   const ITEMS_PER_PAGE = 10;
   const MAX_MOVIES = 100; // Max number of movies to fetch for filtering
+
+  const availableGenres = [
+    "Animation", "Action", "Adventure", "Comedy", "Horror", "Fantasy", "Drama", 
+    "Documentary", "Family", "Sci-Fi", "Romance", "Crime", "Western", 
+    "Biography", "Mystery", "Sport", "Thriller"
+  ];
+
+  const availableReleaseDates = Array.from({ length: 28 }, (_, i) => 2024 - i);
+  const availableRatings = Array.from({ length: 10 }, (_, i) => (10 - i).toString());
 
   useEffect(() => {
     fetchMovies();
@@ -32,6 +39,7 @@ const MoviesList = () => {
     let page = 1;
     let totalFetched = 0;
 
+    setLoading(true); // Start loading indicator
     try {
       while (totalFetched < MAX_MOVIES) {
         const response = await axiosInstance.get('/search', {
@@ -45,7 +53,6 @@ const MoviesList = () => {
         if (response.data.Response === 'True') {
           const moviesList = response.data.Search;
 
-          // Fetch detailed data for each movie
           const detailedMoviesPromises = moviesList.map(movie =>
             axiosInstance.get(`/movie/${movie.imdbID}`)
           );
@@ -56,7 +63,7 @@ const MoviesList = () => {
           moviesData = [...moviesData, ...detailedMoviesData];
           totalFetched += detailedMoviesData.length;
 
-          if (moviesData.length >= MAX_MOVIES || !response.data.totalResults) {
+          if (moviesData.length >= MAX_MOVIES || response.data.totalResults <= totalFetched) {
             break;
           }
 
@@ -70,153 +77,139 @@ const MoviesList = () => {
       setAllMovies(moviesData);
       setFilteredMovies(moviesData.slice(0, ITEMS_PER_PAGE)); // Initialize with the first page of filtered results
       setTotalPages(Math.ceil(moviesData.length / ITEMS_PER_PAGE));
-
-      extractDynamicFilters(moviesData);
     } catch (error) {
       console.error('Error fetching movies:', error);
+    } finally {
+      setLoading(false); // End loading indicator
     }
-  };
-
-  // Extract dynamic filters (Release Dates, Genres, Ratings)
-  const extractDynamicFilters = (moviesData) => {
-    const genresSet = new Set();
-    const releaseDatesSet = new Set();
-    const ratingsSet = new Set();
-
-    moviesData.forEach(movie => {
-      if (movie.Genre) {
-        movie.Genre.split(', ').forEach(genre => genresSet.add(genre));
-      }
-      if (movie.Year) {
-        releaseDatesSet.add(movie.Year);
-      }
-      if (movie.imdbRating) {
-        ratingsSet.add(movie.imdbRating);
-      }
-    });
-
-    setAvailableGenres(Array.from(genresSet));
-    setAvailableReleaseDates(Array.from(releaseDatesSet));
-    setAvailableRatings(Array.from(ratingsSet));
   };
 
   // Apply filters and sort movies by rating
-  const applyFiltersAndSort = () => {
-    let filtered = [...allMovies];
+const applyFiltersAndSort = () => {
+  const filtered = allMovies.filter(movie => {
+    const movieYear = movie.Year ? movie.Year.match(/\d{4}/)[0] : ''; // Extract the year from the movie.Year string
 
-    if (releaseDate) {
-      filtered = filtered.filter(movie => movie.Year === releaseDate);
-    }
+    const matchesReleaseDate = !releaseDate || movieYear === releaseDate.toString();
+    const matchesGenres = !genres || (movie.Genre && movie.Genre.includes(genres));
+    const matchesRating = !rating || (parseFloat(movie.imdbRating) >= parseFloat(rating) && parseFloat(movie.imdbRating) <= (parseFloat(rating) + 0.9));
 
-    if (genres) {
-      filtered = filtered.filter(movie => movie.Genre && movie.Genre.includes(genres));
-    }
+    return matchesReleaseDate && matchesGenres && matchesRating;
+  });
 
-    if (rating) {
-      filtered = filtered.filter(movie => movie.imdbRating && movie.imdbRating === rating);
-    }
+  // Sort filtered movies by rating (from highest to lowest)
+  filtered.sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating));
 
-    // Sort filtered movies by rating (from highest to lowest)
-    filtered.sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating));
+  setFilteredMovies(filtered.slice(0, ITEMS_PER_PAGE)); // Show first page of results
+  setCurrentPage(1);
+  setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
+};
 
-    // Set filtered movies and reset to page 1
-    setFilteredMovies(filtered.slice(0, ITEMS_PER_PAGE)); // Show first page of results
-    setCurrentPage(1);
-    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  };
 
-  // Reset filters
-  const resetReleaseDate = () => setReleaseDate('');
-  const resetGenres = () => setGenres('');
-  const resetRating = () => setRating('');
-
+  // Handle page change for pagination
   const handlePageChange = (direction) => {
+    let newPage = currentPage;
     if (direction === 'next' && currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      newPage++;
     } else if (direction === 'prev' && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      newPage--;
     }
 
-    // Display movies for the current page
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const startIndex = (newPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
+
     setFilteredMovies(allMovies.slice(startIndex, endIndex));
+    setCurrentPage(newPage);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="container mt-2">
-      <h2>Movies List</h2>
-
-      {/* Filter buttons */}
-      <div className="btn-group">
-        {/* Release Date Filter */}
-        <div className="btn-group">
-          <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
-            Release Date
-          </button>
-          <ul className="dropdown-menu">
-            {availableReleaseDates.map((year) => (
-              <li key={year}><a className="dropdown-item" href="#" onClick={() => setReleaseDate(year)}>{year}</a></li>
-            ))}
-            <li><hr className="dropdown-divider" /></li>
-            <li><a className="dropdown-item" href="#" onClick={resetReleaseDate}>Reset</a></li>
-          </ul>
+      {loading ? (
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
         </div>
-        
-        {/* Genres Filter */}
-        <div className="btn-group">
-          <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
-            Genres
-          </button>
-          <ul className="dropdown-menu">
-            {availableGenres.map((genre) => (
-              <li key={genre}><a className="dropdown-item" href="#" onClick={() => setGenres(genre)}>{genre}</a></li>
-            ))}
-            <li><hr className="dropdown-divider" /></li>
-            <li><a className="dropdown-item" href="#" onClick={resetGenres}>Reset</a></li>
-          </ul>
-        </div>
+      ) : (
+        <>
+          <h2>Movies List</h2>
 
-        {/* Rating Filter */}
-        <div className="btn-group">
-          <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
-            Rating
-          </button>
-          <ul className="dropdown-menu">
-            {availableRatings.map((rating) => (
-              <li key={rating}><a className="dropdown-item" href="#" onClick={() => setRating(rating)}>{rating}</a></li>
-            ))}
-            <li><hr className="dropdown-divider" /></li>
-            <li><a className="dropdown-item" href="#" onClick={resetRating}>Reset</a></li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Movies List */}
-      <div className="row mt-3">
-        {filteredMovies.length > 0 ? (
-          filteredMovies.map((movie) => (
-            <div key={movie.imdbID} className="col-12 col-md-6">
-              <MovieCard movie={movie} />
+          {/* Filter buttons */}
+          <div className="btn-group">
+            {/* Release Date Filter */}
+            <div className="btn-group">
+              <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Release Date
+              </button>
+              <ul className="dropdown-menu">
+                {availableReleaseDates.map((year) => (
+                  <li key={year}><a className="dropdown-item" href="#" onClick={() => setReleaseDate(year)}>{year}</a></li>
+                ))}
+                <li><hr className="dropdown-divider" /></li>
+                <li><a className="dropdown-item" href="#" onClick={() => setReleaseDate('')}>Reset</a></li>
+              </ul>
             </div>
-          ))
-        ) : (
-          <p>No movies found</p>
-        )}
-      </div>
+            
+            {/* Genres Filter */}
+            <div className="btn-group">
+              <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Genres
+              </button>
+              <ul className="dropdown-menu">
+                {availableGenres.map((genre) => (
+                  <li key={genre}><a className="dropdown-item" href="#" onClick={() => setGenres(genre)}>{genre}</a></li>
+                ))}
+                <li><hr className="dropdown-divider" /></li>
+                <li><a className="dropdown-item" href="#" onClick={() => setGenres('')}>Reset</a></li>
+              </ul>
+            </div>
 
-      {/* Pagination */}
-      <div className="pagination d-flex justify-content-center mt-3">
-        <button className='btn page-btn' onClick={() => handlePageChange('prev')} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span className="mx-3 page-num">Page {currentPage} of {totalPages}</span>
-        <button className='btn page-btn' onClick={() => handlePageChange('next')} disabled={currentPage === totalPages}>
-          Next
-        </button>
-      </div>
+            {/* Rating Filter */}
+            <div className="btn-group">
+              <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Rating
+              </button>
+              <ul className="dropdown-menu">
+                {availableRatings.map((rating) => (
+                  <li key={rating}><a className="dropdown-item" href="#" onClick={() => setRating(rating)}>{rating}</a></li>
+                ))}
+                <li><hr className="dropdown-divider" /></li>
+                <li><a className="dropdown-item" href="#" onClick={() => setRating('')}>Reset</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Movies List */}
+          <div className="row mt-3">
+            {filteredMovies.length > 0 ? (
+              filteredMovies.map((movie) => (
+                <div key={movie.imdbID} className="col-12 col-md-6">
+                  <MovieCard movie={movie} />
+                </div>
+              ))
+            ) : (
+              <div className="no-movies-found">
+                <p>No movies found. Try adjusting your filters.</p>
+                <button className="btn btn-primary" onClick={() => { 
+                  setReleaseDate(''); 
+                  setGenres(''); 
+                  setRating('');
+                }}>Reset Filters</button>
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          <div className="pagination d-flex justify-content-center mt-3">
+            <button className='btn page-btn' onClick={() => handlePageChange('prev')} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span className="mx-3 page-num">Page {currentPage} of {totalPages}</span>
+            <button className='btn page-btn' onClick={() => handlePageChange('next')} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
