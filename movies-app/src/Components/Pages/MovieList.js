@@ -22,7 +22,7 @@ const MoviesList = () => {
     "Biography", "Mystery", "Sport", "Thriller"
   ];
 
-  const availableReleaseDates = Array.from({ length: 28 }, (_, i) => 2024 - i);
+  const availableReleaseDates = Array.from({ length: 30 }, (_, i) => 2024 - i);
   const availableRatings = Array.from({ length: 10 }, (_, i) => (10 - i).toString());
 
   useEffect(() => {
@@ -126,9 +126,12 @@ const applyFiltersAndSort = () => {
   return (
     <div className="container mt-2">
       {loading ? (
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <div className="spinner-border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    
       ) : (
         <>
           <h2>Movies List</h2>

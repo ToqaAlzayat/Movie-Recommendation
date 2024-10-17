@@ -35,23 +35,22 @@
 }
 
 .heart {
-  color: rgb(183, 183, 183); /* Default heart color */
+  color: rgb(183, 183, 183);
   font-size: 30px;
   transition: color 0.3s ease;
 }
 
 .heart:hover {
-  color: #BF2A37; /* Color on hover */
+  color: #BF2A37; 
 }
 
-/* Active state styling */
 .heart.active {
-  color: #BF2A37 !important; /* Color when the button is clicked */
+  color: #BF2A37 !important; 
 }
 @media (max-width: 768px) {
   .card {
     height: auto !important;
-    width: 100%; /* Full width for mobile */
+    width: 100%; 
   }
   
   .card-img {
@@ -63,7 +62,7 @@
   }
 
   .heart {
-    font-size: 24px !important; /* Reduce icon size for small screens */
+    font-size: 24px !important; 
   }
 
   .add-btn {

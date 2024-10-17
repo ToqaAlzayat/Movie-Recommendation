@@ -1,9 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector ,useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
-
+import { removeFromWATCH_LATER } from '../../redux/actions';
 const WatchLater = () => {
   const watchLater = useSelector((state) => state.watchLater);
+  const dispatch = useDispatch();
+
+  const handleRemoveFromWatchLater = (imdbID) => {
+    dispatch(removeFromWATCH_LATER(imdbID)); // Dispatch remove action
+  };
 
   // Debugging: Log the watchLater state
   console.log("Watch Later Movies:", watchLater);
@@ -40,7 +45,14 @@ const WatchLater = () => {
                       Rate: {movie.imdbRating}
                     </small>
                   </p>
-           
+                  <div className="col d-flex justify-content-end">
+                      <button
+                        className="btn btn-outline-danger mb-2"
+                        onClick={() => handleRemoveFromWatchLater(movie.imdbID)}
+                      >
+                        Remove
+                      </button>
+                      </div>
                    </div>
                  </div>
                </div>

@@ -1,8 +1,8 @@
-import { ADD_TO_FAVORITES, ADD_TO_WATCH_LATER } from './actions';
+import { ADD_TO_FAVORITES,REMOVE_FROM_FAVORITES, ADD_TO_WATCH_LATER,REMOVE_FROM_WATCH_LATER } from './actions';
 
 const initialState = {
-  favorites: [],
-  watchLater: [],
+  favorites: JSON.parse(localStorage.getItem('favorites')) || [], // Load from localStorage, or use empty array
+  watchLater: JSON.parse(localStorage.getItem('watchLater')) || [], 
 };
 
 const movieReducer = (state = initialState, action) => {
@@ -12,28 +12,44 @@ const movieReducer = (state = initialState, action) => {
         console.log("Movie is already in favorites:", action.payload);
         return state; // Don't add it again
       }
-      console.log("Current favorites:", state.favorites);
-      console.log("Adding to favorites:", action.payload);
+      const updatedFavorites = [...state.favorites, action.payload];
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites)); // Save to localStorage
       return {
         ...state,
-        favorites: [...state.favorites, action.payload],
+        favorites: updatedFavorites,
       };
 
-      case ADD_TO_WATCH_LATER:
-        // Log the incoming action to check the payload
-        console.log("Action payload for ADD_TO_WATCH_LATER:", action.payload);
-      
-        // Check if the movie is already in the watch later list
-        if (state.watchLater.find((watchLaterMovie) => watchLaterMovie.imdbID === action.payload.imdbID)) {
-          console.log("Movie is already in watch later:", action.payload); // Log if movie is a duplicate
-          return state; // Don't add it again
-        }
-        console.log("Current watch later list before adding:", state.watchLater);
-        return {
-          ...state,
-          watchLater: [...state.watchLater, action.payload],
-        };
-      
+      case REMOVE_FROM_FAVORITES:
+      const filteredFavorites = state.favorites.filter(
+        (movie) => movie.imdbID !== action.payload
+      );
+      localStorage.setItem('favorites', JSON.stringify(filteredFavorites)); // Update localStorage
+      return {
+        ...state,
+        favorites: filteredFavorites,
+      };
+
+    case ADD_TO_WATCH_LATER:
+      if (state.watchLater.find((watchLaterMovie) => watchLaterMovie.imdbID === action.payload.imdbID)) {
+        console.log("Movie is already in watch later:", action.payload);
+        return state; // Don't add it again
+      }
+      const updatedWatchLater = [...state.watchLater, action.payload];
+      localStorage.setItem('watchLater', JSON.stringify(updatedWatchLater)); // Save to localStorage
+      return {
+        ...state,
+        watchLater: updatedWatchLater,
+      };
+
+      case REMOVE_FROM_WATCH_LATER:
+      const filteredWatchLter = state.watchLater.filter(
+        (movie) => movie.imdbID !== action.payload
+      );
+      localStorage.setItem('watchLater', JSON.stringify(filteredWatchLter)); // Update localStorage
+      return {
+        ...state,
+        watchLater: filteredWatchLter,
+      };
     default:
       return state;
   }

@@ -4,12 +4,13 @@ const cors = require('cors');
 require('dotenv').config(); // To load environment variables from .env
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;// Use port from environment or default to 5000
 
 app.use(cors()); // Enable CORS for cross-origin requests
 app.use(express.json()); // To parse JSON request bodies
 
-const apiKey = process.env.MOVIE_API_KEY; // Store your API key in .env
+const apiKey = process.env.MOVIE_API_KEY; 
+
 // Example API Route to handle movie search
 app.get('/api/search', async (req, res) => {
 
@@ -44,11 +45,17 @@ app.get('/api/search', async (req, res) => {
 // Route to get movies based on genre
 app.get('/api/movies', async (req, res) => {
     const { genre } = req.query; // Get the genre from the query string
-    const url = `http://www.omdbapi.com/?apikey=${apiKey}&s=${genre}&type=movie&page=1`;
 
     try {
-        const response = await axios.get(url);
-        if (response.data.Response === 'True') {
+        const response = await axios.get(`http://www.omdbapi.com/`, {
+            params: {
+                s: genre,
+                type: 'movie',
+                apikey: apiKey,
+                page: req.query.page,
+            },   
+        });
+            if (response.data.Response === 'True') {
             const movies = response.data.Search;
             res.json(movies);
         } else {
